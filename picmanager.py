@@ -1,3 +1,4 @@
+#! /usr/bin/python2.7
 #coding=utf-8
 #start at 2012-10-19
 from __future__ import division		#this must be put at the beginning
@@ -12,11 +13,11 @@ import conf
 #_ScrollBarWidth=18
 _WaitingHandler=None
 
-#try:
-mainC=conf.MC()
-#except Exception, e:
-#	print 'conf set error',e
-#	exit()
+try:
+	mainC=conf.MC()
+except Exception, e:
+	print 'conf set error',e
+	exit()
 
 Iround=lambda x,d=0:int(round(x,d))
 
@@ -37,13 +38,13 @@ def frameFadeOut(frame):
 	#per=int(round(sumt/256))
 	#per=round(per/1000,3)
 	#print per,'per'
-	for i in xrange(0,255):
+	a="""for i in xrange(0,255):
 		frame.SetTransparent(255-i)
 		#if i != 255:
 			##print T.clock()-startT,'40'
 		T.sleep(0.001)
 			##print T.clock()-startT,'42'
-	#print T.clock()-startT,'43'
+	#print T.clock()-startT,'43'"""
 	frame.Destroy()
 
 class MySplashFrame(AdvancedSplash):
@@ -310,14 +311,14 @@ class MyImWindow(wx.Panel):
 		super(self.__class__, self).__init__(parent, size=size)
 		self.SetBackgroundColour('white')
 		self.paths=paths if paths else [mainC.welIm]
-		#print 'client size',parent.GetClientSize()
+		print 'client size',parent.GetClientSize()
 		self.parent=parent
 		self.sel=sel
 		self.size=self.GetSize()
 		l=len(paths)
 		r,c = self.sortRC(l)
 		self.SetSizer(wx.GridSizer(r, c, 20, 20))
-		#print self.size
+		print self.size
 		#self.scrollBar=wx.ScrollBar(self, -1, (-1,-1), (-1,-1), wx.SB_VERTICAL)
 		self.Init()
 		self.Bind(wx.EVT_SIZE, self.OnSize)
@@ -336,7 +337,7 @@ class MyImWindow(wx.Panel):
 
 	def Init(self):
 		global _WaitingHandler
-		#print 'init'
+		print 'init'
 		ss= self.Sizer
 		sps=self.paths
 		pn=len(sps)
@@ -658,11 +659,16 @@ class MainWindow(wx.SplitterWindow):
 	def ItemGetPath(self, item):
 		path=''
 		fl=self.folderList
-		path=fl.GetItemText(item)
+		path+=fl.GetItemText(item)
+		print type(path)
 		curItem=item
+		if curItem == fl.GetRootItem():
+			return path
 		while fl.GetItemParent(curItem) != fl.GetRootItem():
+			print path
 			curItem=fl.GetItemParent(curItem)
 			path=fl.GetItemText(curItem)+PS+path
+		#print path,' 2'
 		return path
 
 	def DelListFolder(self, e):
@@ -794,7 +800,7 @@ class MainFrame(wx.Frame):
 		self.Center()
 		self.title = title
 		self.size = size
-		#print T.clock()-startT,'271'
+		print T.clock()-startT,'271'
 		self.window = MainWindow(self)
 		#self.window.SetBackgroundColour('#')
 		#self.SetFont(wx.Font(20, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
@@ -888,20 +894,22 @@ class MainFrame(wx.Frame):
 class PicM(wx.App):
 	"""docstring for PicManager"""
 	def OnInit(self):
-		bmp=wx.Image(mainC.welIm, wx.BITMAP_TYPE_PNG).ConvertToBitmap()
-		bmp.SetMask(wx.Mask(bmp))
-		MySplashFrame(self, bmp, (bmp.GetWidth(),bmp.GetHeight()),mainC.welT)
-		wx.Yield()
+		#bmp=wx.Image(mainC.welIm, wx.BITMAP_TYPE_PNG).ConvertToBitmap()
+		#bmp.SetMask(wx.Mask(bmp))
+		#MySplashFrame(self, bmp, (bmp.GetWidth(),bmp.GetHeight()),mainC.welT)
+		#wx.Yield()
 		#print T.clock()-startT,'344'
 		self.mFrame=MainFrame(conf._Title, mainC.size)
-		#print T.clock()-startT,'346'
+		print T.clock()-startT
 		self.SetTopWindow(self.mFrame)
+		self.mFrame.Show()
 		#self.waiting=WaitingFrame(self.mFrame)
 		#self.waiting.Show()
 		return True
 
 if mainC and __name__=='__main__':
-	#startT=T.clock()
+	startT=T.clock()
+	print startT
 	app=PicM(0)
 	app.MainLoop()
 	mainC.save()

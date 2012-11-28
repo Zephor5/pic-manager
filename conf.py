@@ -1,3 +1,4 @@
+#! /usr/bin/python2.7
 #coding=utf-8
 import os,cPickle as P
 from os import sep as PS
@@ -7,7 +8,7 @@ _Version='1.0'
 _Author='Zephor'
 
 class MC(object):
-	"""docstring for selfonf"""
+	"""docstring for MainConfig"""
 	def __init__(self):
 		self.confDir='.'+PS+'conf'+PS
 		self.iniFile=self.confDir+'ini.data'
@@ -16,7 +17,7 @@ class MC(object):
 		self.welIm=self.imPath+'welcome.png'
 		self.welT=500
 		self.icon=self.imPath+'icon.ico'
-		self.listFolder=['F:'+PS+'Pictures'+PS+'avril'+PS+u'Avril Lavigne 你怎么这么美']
+		self.listFolder=['']
 		self.sashPos=0
 		self.maxSashPos=240
 		self.imTypes=['jpg','jpeg','png','bmp','gif']			#均小写
@@ -46,9 +47,9 @@ class MC(object):
 		else:
 			try:
 				os.mkdir(self.confDir)
-				checkIni()
+				self.checkIni()
 			except Exception, e:
-				raise 'Can\'t make confdir!'
+				raise "Can't make confdir!"
 
 	def initConf(self):
 		self.defaultPath=self.listFolder[-1] if self.listFolder else ''
